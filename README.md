@@ -1,4 +1,5 @@
 # SwatchNet
+<<<<<<< HEAD
 
 SwatchNet is a community-driven civic cleanliness and reporting platform.
 
@@ -50,3 +51,7 @@ swatchnet/
    ```bash
    pnpm typecheck
    ```
+=======
+Where Cleanliness Meets Technology
+"Work in progress"
+>>>>>>> origin/main
