@@ -60,7 +60,7 @@ export default function App(): React.JSX.Element {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50 text-stone-900 selection:bg-emerald-800 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-[#f7f8f4] text-[#1d2922] selection:bg-[#315f43] selection:text-white">
       {/* 1. Header & Navigation */}
       <Navbar
         onReportClick={handleOpenReport}

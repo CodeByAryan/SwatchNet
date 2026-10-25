@@ -12,57 +12,57 @@ export function CommunityCtaSection({
   onSignInClick,
 }: CommunityCtaSectionProps): React.JSX.Element {
   return (
-    <section className="py-16 md:py-24 bg-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl bg-emerald-900 text-white overflow-hidden shadow-xl p-8 sm:p-12 lg:p-16 border border-emerald-800">
-          {/* Subtle decorative background pattern */}
+    <section className="bg-white py-16 md:py-24">
+      <div className="section-wrap">
+        <div className="relative overflow-hidden rounded-3xl border border-[#224835] bg-[#173d2d] p-8 text-white shadow-[0_8px_32px_rgba(23,61,45,0.22)] sm:p-12 lg:p-16">
+          {/* Subtle soft gradient light wash */}
           <div
-            className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-emerald-800/40 blur-3xl pointer-events-none"
+            className="pointer-events-none absolute -top-16 -right-16 h-80 w-80 rounded-full bg-[#265940]/40 blur-3xl"
             aria-hidden="true"
           />
           <div
-            className="absolute bottom-0 left-0 -mb-12 -ml-12 w-72 h-72 rounded-full bg-emerald-700/20 blur-2xl pointer-events-none"
+            className="pointer-events-none absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#1e4a35]/40 blur-3xl"
             aria-hidden="true"
           />
 
-          <div className="relative max-w-3xl mx-auto text-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/80 border border-emerald-700/70 text-xs font-semibold text-emerald-200">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-              Join the Neighborhood Movement
+          <div className="relative mx-auto max-w-3xl space-y-6 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#2e5d44] bg-[#1e4835] px-3.5 py-1 text-xs font-semibold text-[#c8e2b8]">
+              <Sparkles className="h-3.5 w-3.5 text-[#a8d394]" />
+              Civic Action
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-              A cleaner neighborhood begins with a single photo.
+            <h2 className="font-display text-3xl font-extrabold tracking-[-0.035em] text-white sm:text-4xl lg:text-5xl lg:leading-[1.15]">
+              Cleaner neighborhoods begin with a single verified report.
             </h2>
 
-            <p className="text-sm sm:text-base text-emerald-100/90 max-w-xl mx-auto leading-relaxed font-normal">
-              Whether you are walking your dog, commuting through your block, or organizing a weekend
-              civic cleanup squad, SwatchNet gives you the direct tools to make an immediate impact.
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-[#cad6cc] sm:text-base">
+              Whether you are walking your dog, commuting, or organizing a weekend community cleanup,
+              SwatchNet gives you direct tools to turn concern into recorded progress.
             </p>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row">
               <Button
                 variant="secondary"
                 size="lg"
                 onClick={onReportClick}
-                className="w-full sm:w-auto bg-white text-emerald-950 hover:bg-stone-100 border-none group"
+                className="group w-full border-none bg-white text-[#153426] hover:bg-[#f2f6ee] sm:w-auto"
               >
                 <span>Report Garbage Now</span>
-                <ArrowRight className="w-4 h-4 text-emerald-800 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-4 w-4 text-[#173d2d] transition-transform group-hover:translate-x-0.5" />
               </Button>
 
               <button
                 type="button"
                 onClick={onSignInClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-base font-semibold text-white hover:bg-emerald-800/80 border border-emerald-700/80 transition-colors cursor-pointer"
+                className="inline-flex min-h-[2.875rem] w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#315f47] bg-[#1d4633] px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-[#25543e] sm:w-auto"
               >
-                <UserPlus className="w-4 h-4 text-emerald-300" />
+                <UserPlus className="h-4 w-4 text-[#a8d394]" />
                 <span>Join as a Volunteer Cleaner</span>
               </button>
             </div>
 
-            <p className="text-xs text-emerald-200/70 pt-2">
-              Free and open platform for residents, civic volunteers, and neighborhood associations.
+            <p className="pt-2 text-xs text-[#a2b5a5]">
+              Open civic architecture for residents, community groups, and municipal partners.
             </p>
           </div>
         </div>

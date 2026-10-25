@@ -10,91 +10,89 @@ export function HowItWorksSection({ onReportClick }: HowItWorksSectionProps): Re
   const steps = [
     {
       stepNumber: "01",
-      icon: <Camera className="w-6 h-6 text-emerald-800" />,
+      icon: <Camera className="h-5 w-5 text-[#245037]" />,
       title: "Snap & Geotag",
       description:
-        "Photograph garbage anywhere in public space. SwatchNet automatically tags your location and lets you describe the issue in seconds.",
+        "Capture a photo of roadside waste or an illegal dump. SwatchNet tags the exact coordinates and lets you add essential notes in seconds.",
     },
     {
       stepNumber: "02",
-      icon: <CheckSquare className="w-6 h-6 text-emerald-800" />,
-      title: "Review & Categorize",
+      icon: <CheckSquare className="h-5 w-5 text-[#245037]" />,
+      title: "Categorize & Prioritize",
       description:
-        "Reports are swiftly verified and categorized by urgency and debris type to ensure appropriate equipment and personnel are allocated.",
+        "Reports are sorted by hazard level and debris type so the proper crew, collection gear, and transport are dispatched without delay.",
     },
     {
       stepNumber: "03",
-      icon: <UserCheck className="w-6 h-6 text-emerald-800" />,
-      title: "Cleaner Dispatched",
+      icon: <UserCheck className="h-5 w-5 text-[#245037]" />,
+      title: "Squad Assigned",
       description:
-        "Local cleaners or municipal partners accept the task, track the exact coordinates, and head to the cleanup location.",
+        "Volunteer cleaning circles or municipal workers accept the route, view the location pin, and arrive equipped to clean the area.",
     },
     {
       stepNumber: "04",
-      icon: <ShieldCheck className="w-6 h-6 text-emerald-800" />,
-      title: "Resolution Verified",
+      icon: <ShieldCheck className="h-5 w-5 text-[#245037]" />,
+      title: "Proof Verified",
       description:
-        "A photo of the cleaned site is submitted. The report is resolved, giving residents transparent proof that their voice made a difference.",
+        "The site is photographed once cleared. The community receives direct proof of resolution, closing the loop with open transparency.",
     },
   ];
 
   return (
-    <section id="how-it-works" className="py-16 md:py-24 bg-white border-y border-stone-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" className="border-y border-[#e2e7de] bg-white py-16 md:py-24">
+      <div className="section-wrap">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-20">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/60 inline-block mb-3">
-            Civic Workflow
+        <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
+          <span className="inline-block rounded-full border border-[#d6dfd0] bg-[#eef3e8] px-3 py-1 text-xs font-semibold text-[#1c3826]">
+            Civic Process
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
-            How SwatchNet Works
+          <h2 className="mt-3 font-display text-3xl font-bold tracking-[-0.035em] text-[#16241a] sm:text-4xl">
+            How SwatchNet turns reports into clean streets
           </h2>
-          <p className="mt-3 text-stone-600 text-sm sm:text-base leading-relaxed">
-            From the moment you spot trash on a street corner or park trail, our 4-stage process
-            turns citizen reports into fast, verifiable civic action.
+          <p className="mt-3 text-sm leading-relaxed text-[#556559] sm:text-base">
+            A clear four-stage accountability loop built to eliminate unaddressed reports and give
+            every community member verifiable proof of progress.
           </p>
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative">
-          {steps.map((step, idx) => (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step) => (
             <div
               key={step.stepNumber}
-              className="relative bg-stone-50/80 rounded-2xl p-6 sm:p-7 border border-stone-200/90 hover:border-emerald-700/40 hover:bg-white hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+              className="flex flex-col justify-between rounded-2xl border border-[#e2e7de] bg-[#fbfcf9] p-6 transition-all duration-200 hover:border-[#b8cbb4] hover:bg-white hover:shadow-[0_4px_16px_rgba(20,40,30,0.05)] sm:p-7"
             >
               <div>
-                {/* Step header with number and icon */}
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-xl bg-white border border-stone-200 shadow-xs flex items-center justify-center">
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#dce3d8] bg-white text-[#173d2d] shadow-xs">
                     {step.icon}
                   </div>
-                  <span className="text-2xl font-black text-stone-300 tracking-tight">
-                    {step.stepNumber}
+                  <span className="font-display text-xs font-bold tracking-wider text-[#8a988d]">
+                    STEP {step.stepNumber}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-stone-900 mb-2">
+                <h3 className="font-display text-base font-bold text-[#1d2b20]">
                   {step.title}
                 </h3>
-                <p className="text-sm text-stone-600 leading-relaxed">
+                <p className="mt-2 text-sm leading-relaxed text-[#596a5e]">
                   {step.description}
                 </p>
               </div>
-
-              {/* Progress indicator arrow for non-last desktop items */}
-              {idx < steps.length - 1 && (
-                <div className="hidden lg:block absolute -right-4 top-1/2 -translate-y-1/2 z-10 text-stone-300">
-                  <ArrowRight className="w-5 h-5" />
-                </div>
-              )}
             </div>
           ))}
         </div>
 
-        {/* Mid-section prompt */}
-        <div className="mt-12 text-center">
-          <Button variant="secondary" size="md" onClick={onReportClick}>
-            Start by reporting an issue near you
+        {/* Action prompt */}
+        <div className="mt-12 flex justify-center text-center">
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={onReportClick}
+            className="group"
+          >
+            <span>Start with a quick report</span>
+            <ArrowRight className="h-4 w-4 text-[#204a37] transition-transform group-hover:translate-x-0.5" />
           </Button>
         </div>
       </div>

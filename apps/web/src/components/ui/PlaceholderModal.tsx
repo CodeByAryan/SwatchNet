@@ -39,39 +39,39 @@ export function PlaceholderModal({
 
   const contentMap = {
     report: {
-      badge: "Feature in Development — Step 1 & 2 Complete",
-      icon: <Camera className="w-6 h-6 text-emerald-800" />,
+      badge: "Feature in active development",
+      icon: <Camera className="h-5 w-5 text-[#245037]" />,
       defaultTitle: "Garbage Reporting Workflow",
       defaultDesc:
-        "The photo capture, automatic GPS geotagging, and AI categorization pipeline will be connected in the upcoming feature sprint. The core monorepo foundation and design systems are established.",
+        "The photo capture, automatic GPS geotagging, and debris categorization pipeline will be connected in the upcoming release. Monorepo architecture and design systems are established.",
       checklist: [
-        "Geotagged image upload with automated validation",
-        "AI classification of debris type and estimated volume",
-        "Real-time dispatch to community cleaners & municipal staff",
+        "Geotagged image upload with coordinate capture",
+        "Categorization of debris volume and hazard level",
+        "Direct dispatching to nearby cleaner circles & municipal crews",
       ],
     },
     signin: {
       badge: "Civic Portal Access",
-      icon: <LogIn className="w-6 h-6 text-emerald-800" />,
+      icon: <LogIn className="h-5 w-5 text-[#245037]" />,
       defaultTitle: "Authentication & Volunteer Portal",
       defaultDesc:
-        "Secure resident, volunteer, and administrator logins with role-based access control are scheduled in the next platform release.",
+        "Resident submissions, cleaner task boards, and administrator review with Neon Auth are being integrated.",
       checklist: [
-        "Resident profile with tracked cleanup submissions",
-        "Cleaner dashboard with assigned tasks and routing",
-        "Municipal administrator review console",
+        "Resident profile with tracked reports and status alerts",
+        "Cleaner squad dashboard with assigned cleanup routes",
+        "Municipal coordinator review and resolution log",
       ],
     },
     info: {
       badge: "Platform Roadmap",
-      icon: <Info className="w-6 h-6 text-emerald-800" />,
-      defaultTitle: "SwatchNet Development Update",
+      icon: <Info className="h-5 w-5 text-[#245037]" />,
+      defaultTitle: "SwatchNet Transparency & Guidelines",
       defaultDesc:
-        "We are currently configuring the core foundation, database models (Neon PostgreSQL + Drizzle ORM), and verified verification pipelines.",
+        "SwatchNet adheres to open civic principles and photographic verification for every resolved report across participating districts.",
       checklist: [
         "Open-source community reporting protocols",
-        "Before-and-after photographic verification",
-        "Transparent neighborhood cleanliness scores",
+        "Double-photo verification benchmark (before & after)",
+        "Zero simulated statistics policy",
       ],
     },
   };
@@ -80,59 +80,59 @@ export function PlaceholderModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#122118]/70 backdrop-blur-xs transition-opacity"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-stone-200 p-6 sm:p-8 overflow-hidden text-left"
+        className="relative w-full max-w-lg rounded-2xl border border-[#d9e2d6] bg-white p-6 sm:p-8 text-left shadow-[0_20px_50px_rgba(10,25,18,0.25)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
           aria-label="Close dialog"
-          className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-full transition-colors cursor-pointer"
+          className="absolute top-4 right-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-[#657769] transition-colors hover:bg-[#eef2ea] hover:text-[#173d2d]"
         >
-          <X className="w-5 h-5" />
+          <X className="h-5 w-5" />
         </button>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#d8e3d3] bg-[#f2f7ef]">
             {activeContent.icon}
           </div>
           <div>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100/70 text-emerald-800">
-              <Sparkles className="w-3 h-3" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#d2dfcd] bg-[#eef4ea] px-3 py-1 text-xs font-semibold text-[#1c3826]">
+              <Sparkles className="h-3 w-3 text-[#527e46]" />
               {activeContent.badge}
             </span>
           </div>
         </div>
 
-        <h3 id="modal-title" className="text-xl font-bold text-stone-900 mb-2">
+        <h3 id="modal-title" className="font-display text-xl font-bold tracking-tight text-[#16241a] sm:text-2xl">
           {title || activeContent.defaultTitle}
         </h3>
 
-        <p className="text-sm text-stone-600 leading-relaxed mb-6">
+        <p className="mt-2 text-sm leading-relaxed text-[#56685b]">
           {description || activeContent.defaultDesc}
         </p>
 
-        <div className="bg-stone-50 rounded-xl p-4 border border-stone-200/80 mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500 mb-2">
-            Planned Integration
+        <div className="mt-5 mb-6 rounded-xl border border-[#e2e8df] bg-[#fbfcf9] p-4">
+          <p className="mb-2.5 text-[11px] font-bold tracking-wider text-[#738276] uppercase">
+            Planned Technical Steps
           </p>
-          <ul className="space-y-2 text-xs text-stone-700">
+          <ul className="space-y-2 text-xs text-[#3b4c40]">
             {activeContent.checklist.map((item, idx) => (
-              <li key={idx} className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-700 mt-1.5 shrink-0" />
-                <span>{item}</span>
+              <li key={idx} className="flex items-start gap-2.5">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3b6644]" />
+                <span className="leading-normal">{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5">
+        <div className="flex flex-col items-center justify-end gap-2.5 sm:flex-row">
           <Button variant="outline" size="md" onClick={onClose} className="w-full sm:w-auto">
             Close
           </Button>
@@ -142,7 +142,7 @@ export function PlaceholderModal({
             onClick={onClose}
             className="w-full sm:w-auto"
           >
-            Got it, thanks
+            Understood
           </Button>
         </div>
       </div>
