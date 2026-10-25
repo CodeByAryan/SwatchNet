@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter @swatchnet/web run build",
-  "outputDirectory": "apps/web/dist"
+  "outputDirectory": "dist"
 }

@@ -20,7 +20,7 @@ packages/shared/ shared types and validation
 Do not put `DATABASE_URL`, signing keys, or other server secrets in `VITE_*` variables. `VITE_NEON_AUTH_URL` is a public Auth endpoint, not a secret.
 
 ## Deploy frontend to Vercel
-Create a Vercel project connected to this repository, set **Root Directory** to the repository root (`.`), **Framework Preset** to Vite, **Build Command** to `pnpm --filter @swatchnet/web build`, and **Output Directory** to `apps/web/dist`. The Vercel config is static frontend-only; API requests go directly to the separate Render service.
+Create a Vercel project connected to this repository, set **Root Directory** to the repository root (`.`), **Framework Preset** to Vite, **Build Command** to `pnpm --filter @swatchnet/web run build`, and **Output Directory** to `dist`. Vite is configured to emit the frontend build to the repository-root `dist` directory expected by Vercel. The Vercel config is static frontend-only; API requests go directly to the separate Render service.
 
 Set `VITE_API_BASE_URL` in Vercel to `https://<your-render-service>.onrender.com/api`. Set public build variables `VITE_NEON_AUTH_URL` and, if used, `VITE_GOOGLE_MAPS_API_KEY`. No API rewrite or Vercel Function is configured.
 
