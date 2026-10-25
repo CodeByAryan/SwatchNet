@@ -20,7 +20,7 @@ packages/shared/ shared types and validation
 Do not put `DATABASE_URL`, signing keys, or other server secrets in `VITE_*` variables. `VITE_NEON_AUTH_URL` is a public Auth endpoint, not a secret.
 
 ## Deploy to one Vercel project
-The repository root must be the Vercel project root (do not set `apps/web` as the Root Directory). The root `vercel.json` runs the Vite production build into `apps/web/dist`, exposes `/api/*` through the Express function in `api/index.ts`, and rewrites frontend paths to the SPA entrypoint. The Express app is exported as a Vercel Function; it does not rely on a persistent listener, local storage, or `express.static()`. Since this monorepo keeps the API source outside the root function folder, `vercel.json` includes `apps/api/src/**` in that function bundle.
+The repository root must be the Vercel project root (do not set `apps/web` as the Root Directory). The root `vercel.json` runs the Vite production build into `apps/web/dist`, exposes `/api/*` through the Express function in `api/index.ts`, and rewrites frontend paths to the SPA entrypoint. The Express app is exported as a Vercel Function; it does not rely on a persistent listener, local storage, or `express.static()`. The function config includes `apps/api/src/**` in the bundle, as this monorepo keeps the API implementation outside the root `api/` folder.
 
 ### Vercel project settings
 - **Framework Preset:** Vite (or Other if Vercel does not detect the monorepo config)
