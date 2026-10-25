@@ -8,11 +8,18 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: #fafaf9; /* Tailwind stone-50 warm off-white */
-    color: #1c1917; /* Tailwind stone-900 high contrast */
+    background-color: #fafaf9;
+    /* Tailwind stone-50 warm off-white */
+    color: #1c1917;
+    /* Tailwind stone-900 high contrast */
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-heading);
     letter-spacing: -0.02em;
   }
