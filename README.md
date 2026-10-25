@@ -2,12 +2,12 @@
 SwatchNet is a community-driven civic cleanliness and reporting platform.
 
 ## Architecture
-This pnpm monorepo uses React + TypeScript + Vite for the frontend, Node.js + Express + TypeScript for the API, and Neon PostgreSQL with Drizzle ORM. A single Vercel project serves the static Vite app and the Express API from one public domain.
+This pnpm monorepo uses React + TypeScript + Vite for the frontend, Node.js + Express + TypeScript for the API, and Neon PostgreSQL with Drizzle ORM. Deploy the frontend to Vercel and the API separately to Render; the API connects to the existing Neon database and Neon Auth.
 
 ```text
 apps/web/     React + Vite frontend
 apps/api/     Express API, Neon/Drizzle database access
-api/index.ts  Vercel Function entrypoint which exports the Express app
+apps/api/src/server.ts Express entrypoint for local development and Render
 packages/shared/ shared types and validation
 ```
 
@@ -19,38 +19,37 @@ packages/shared/ shared types and validation
 
 Do not put `DATABASE_URL`, signing keys, or other server secrets in `VITE_*` variables. `VITE_NEON_AUTH_URL` is a public Auth endpoint, not a secret.
 
-## Deploy to one Vercel project
-The repository root must be the Vercel project root (do not set `apps/web` as the Root Directory). The root `vercel.json` runs the Vite production build into `apps/web/dist`, exposes `/api/*` through the Express function in `api/index.ts`, and rewrites frontend paths to the SPA entrypoint. The Express app is exported as a Vercel Function; it does not rely on a persistent listener, local storage, or `express.static()`. The function config includes `apps/api/src/**` in the bundle, as this monorepo keeps the API implementation outside the root `api/` folder.
+## Deploy frontend to Vercel
+Create a Vercel project connected to this repository, set **Root Directory** to the repository root (`.`), **Framework Preset** to Vite, **Build Command** to `pnpm --filter @swatchnet/web build`, and **Output Directory** to `apps/web/dist`. The Vercel config is static frontend-only; API requests go directly to the separate Render service.
 
-### Vercel project settings
-- **Framework Preset:** Vite (or Other if Vercel does not detect the monorepo config)
-- **Root Directory:** `.` (repository root)
-- **Install Command:** `pnpm install --frozen-lockfile` (or use the detected pnpm install command)
-- **Build Command:** leave as configured by `vercel.json`: `pnpm --filter @swatchnet/web build`
-- **Output Directory:** `apps/web/dist` (configured in `vercel.json`)
-- **Development Command:** optional; use `pnpm dev` for the workspace, or `vercel dev` for local Vercel routing
-- Use one project/domain for both web and API; no separate API hosting project is required.
+Set `VITE_API_BASE_URL` in Vercel to `https://<your-render-service>.onrender.com/api`. Set public build variables `VITE_NEON_AUTH_URL` and, if used, `VITE_GOOGLE_MAPS_API_KEY`. No API rewrite or Vercel Function is configured.
 
-### Environment variables
-Set these in **Vercel → Project → Settings → Environment Variables**, for Production and Preview as appropriate, then redeploy:
+## Deploy backend to Render
+Use a Render **Web Service** from the same repository with **Root Directory** set to the repository root, **Build Command** `pnpm install --frozen-lockfile && pnpm --filter @swatchnet/shared run typecheck && pnpm --filter @swatchnet/api run build`, and **Start Command** `pnpm --filter @swatchnet/api run start`. Set auto-deploy paths to `apps/api/**`, `packages/shared/**`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, and `render.yaml`. The `render.yaml` Blueprint records these settings. The root install preserves the pnpm lockfile and workspace dependency links; the exact install and API build commands were verified locally. Select a currently available compute plan in Render; the Blueprint intentionally omits a plan value rather than assume account availability.
 
-| Name | Where | Purpose |
+Set `NODE_ENV=production`, `DATABASE_URL`, `NEON_AUTH_BASE_URL`, and `CORS_ORIGIN` in Render. Set `CORS_ORIGIN` to the Vercel production origin and any allowed Preview origins (comma-separated). Render supplies `PORT`; the app listens on it and uses 5000 as the local default. Never expose `DATABASE_URL` or server secrets through a `VITE_` variable.
+
+## Environment variables
+| Platform | Name | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | Server-only | Neon PostgreSQL connection string used by Drizzle |
-| `NEON_AUTH_BASE_URL` | Server-only | Neon Managed Auth Base URL. Used only to build the Auth JWKS URL and validate JWT issuer |
-| `VITE_NEON_AUTH_URL` | Public frontend build | Same Neon Auth Base URL, used by the official React SDK |
-| `GEMINI_API_KEY` | Server-only, only if needed | Existing external API placeholder; do not expose with a `VITE_` prefix |
-| `VITE_GOOGLE_MAPS_API_KEY` | Public frontend build, only if needed | Existing client-side Maps placeholder; restrict the key to the app's domain in the provider console |
+| Render | `DATABASE_URL` | Existing Neon PostgreSQL URL used by Drizzle |
+| Render | `NEON_AUTH_BASE_URL` | Server-only Neon Auth base URL for JWKS verification |
+| Render | `CORS_ORIGIN` | Exact allowed frontend origins, comma-separated |
+| Render | `NODE_ENV` | Set to `production` |
+| Vercel | `VITE_API_BASE_URL` | Render API origin plus `/api`, e.g. `https://swatchnet-api.onrender.com/api` |
+| Vercel | `VITE_NEON_AUTH_URL` | Public Neon Auth URL used by the React SDK |
+| Vercel | `VITE_GOOGLE_MAPS_API_KEY` | Optional public Maps key; domain-restrict it |
 
-Keep `NEON_AUTH_BASE_URL` and `VITE_NEON_AUTH_URL` pointed at the same branch's Auth Base URL. Do not set the local-only `API_PROXY_TARGET` in Vercel; production browser calls use same-origin `/api` URLs. No database migrations are run by the build or deployment. Existing tables/data and the committed Drizzle migration are preserved.
+Keep `NEON_AUTH_BASE_URL` and `VITE_NEON_AUTH_URL` pointed at the same Neon Auth branch. Do not add migrations to either build/start command. The existing schema, migrations, and data are untouched.
 
 ### Neon Auth setup
-Enable Managed Better Auth for the Neon project/branch. Use the current Neon React SDK client at `apps/web/src/lib/auth.ts`. Browser sign-in continues to use Neon Auth's secure session cookie. For API bearer-token requests, the client helper calls `authClient.token()`; enable Neon's JWT plugin in the Auth configuration to make this token endpoint available. Express validates token signature and issuer against `<NEON_AUTH_BASE_URL>/.well-known/jwks.json` using `jose`. Protected API route example: `GET /api/auth/me`. Add trusted production and preview origins in Neon's Auth configuration as required. The existing sign-in UI remains an informational placeholder and has not been switched to a real sign-in flow.
+Enable Managed Better Auth for the Neon project/branch. Use the current Neon React SDK client at `apps/web/src/lib/auth.ts`. Browser sign-in continues to use Neon Auth's secure session cookie. For API bearer-token requests, the client helper calls `authClient.token()`; enable Neon's JWT plugin in the Auth configuration to make this token endpoint available. Express validates the token signature, issuer, and audience (both Neon JWT claims are checked against the Neon Auth origin) against `<NEON_AUTH_BASE_URL>/.well-known/jwks.json` using `jose`. The API fails closed if the Auth URL is not configured. Protected API route example: `GET /api/auth/me`. Add trusted production and preview origins in Neon's Auth configuration as required. The existing sign-in UI remains an informational placeholder and has not been switched to a real sign-in flow.
 
 ### Verify after deployment
-- Open `/` and confirm the SwatchNet app loads.
-- Open `/api/health` and expect JSON `{ "success": true, ... }`.
-- Open `/api/health/db` to verify the server-side database connection.
-- `GET /api/auth/me` requires `Authorization: Bearer <Neon Auth JWT>`; without a valid token it returns 401.
+- Open the Vercel frontend URL and confirm the SwatchNet app loads.
+- Open `https://<render-host>/api/health` and check for success JSON.
+- Open `https://<render-host>/api/health/db` to verify the existing Neon connection.
+- `GET https://<render-host>/api/auth/me` requires `Authorization: Bearer <Neon Auth JWT>`; without a valid token it returns 401.
+- Check a browser API request succeeds cross-origin from the Vercel frontend.
 
-Deployment is not considered successful until these endpoints are checked on the deployed Vercel URL. This repository setup does not itself create a Vercel project or deploy it.
+Deployment is not considered successful until these deployed endpoints are checked. No deployment was initiated by these repository changes.

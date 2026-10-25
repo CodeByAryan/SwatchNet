@@ -3,10 +3,9 @@ import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Vercel injects environment variables at runtime; local dotenv discovery
-// is only needed when running the API from the monorepo.
+// Load local env files for developer runs; Render injects its dashboard values.
 const configDirectory = dirname(fileURLToPath(import.meta.url));
-const envCandidates = process.env.VERCEL === "1" ? [] : [
+const envCandidates = [
   resolve(configDirectory, "../../../.env"),
   resolve(configDirectory, "../../.env"),
   resolve(process.cwd(), "../../.env"),
@@ -24,4 +23,8 @@ export const config = {
   port: Number(process.env.PORT) || 5000,
   nodeEnv: process.env.NODE_ENV || "development",
   databaseUrl: process.env.DATABASE_URL,
+  corsOrigins: (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 };

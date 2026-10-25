@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: swatchnet-api
+    runtime: node
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @swatchnet/shared run typecheck && pnpm --filter @swatchnet/api run build
+    startCommand: pnpm --filter @swatchnet/api run start
+    healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - apps/api/**
+        - packages/shared/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - render.yaml
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: NEON_AUTH_BASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false

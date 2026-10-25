@@ -1,14 +1,12 @@
 import { authClient } from "./auth";
 
-/** Call a protected same-origin API endpoint with a fresh Neon Auth JWT. */
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
+
+/** Call a protected API endpoint with a fresh Neon Auth JWT. */
 export async function authenticatedApiRequest<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
-  if (!authClient) {
-    throw new Error("VITE_NEON_AUTH_URL is not configured.");
-  }
-
   const client = authClient;
   if (!client) {
     throw new Error("VITE_NEON_AUTH_URL is not configured.");
@@ -20,7 +18,7 @@ export async function authenticatedApiRequest<T>(
   }
 
   const normalizedPath = path.replace(/^\/+/, "");
-  const response = await fetch(`/api/${normalizedPath}`, {
+  const response = await fetch(`${API_BASE_URL}/${normalizedPath}`, {
     ...init,
     headers: {
       ...init?.headers,

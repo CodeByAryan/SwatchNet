@@ -1,6 +1,6 @@
-const API_BASE_URL = "/api";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
 
-/** Same-origin API helper for local Vite proxy and production Vercel routing. */
+/** Configurable API URL; defaults to the Vite proxy path during local development. */
 export async function apiRequest<T>(
   path: string,
   init?: RequestInit,

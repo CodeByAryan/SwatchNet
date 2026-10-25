@@ -34,7 +34,7 @@ export async function requireNeonAuth(
   }
 
   try {
-    const { payload } = await jwtVerify(token, jwks, { issuer });
+    const { payload } = await jwtVerify(token, jwks, { issuer, audience: issuer });
     req.auth = payload;
     next();
   } catch {
