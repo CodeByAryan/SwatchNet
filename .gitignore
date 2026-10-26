@@ -24,6 +24,7 @@ lerna-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env*
 *.env
 !*.env.example
 
@@ -47,3 +48,6 @@ coverage/
 .turbo/
 .cache/
 .vite/
+
+# Vercel project metadata and local environment files
+.vercel/
