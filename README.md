@@ -22,7 +22,7 @@ Do not put `DATABASE_URL`, signing keys, or other server secrets in `VITE_*` var
 ## Deploy frontend to Vercel
 Create a Vercel project connected to this repository, set **Root Directory** to the repository root (`.`), **Framework Preset** to Vite, **Build Command** to `pnpm --filter @swatchnet/web run build`, and **Output Directory** to `dist`. Vite is configured to emit the frontend build to the repository-root `dist` directory expected by Vercel. The Vercel config is static frontend-only; API requests go directly to the separate Render service.
 
-Set `VITE_API_BASE_URL` in Vercel to `https://<your-render-service>.onrender.com/api`. Set `VITE_NEON_AUTH_URL` to the Neon Auth base URL and, if used, `VITE_GOOGLE_MAPS_API_KEY`. Vercel's SPA rewrite serves deep links; API requests go directly to Render.
+Set `VITE_API_BASE_URL` in Vercel to `https://swatchnet.onrender.com/api`. Set `VITE_NEON_AUTH_URL` to the Neon Auth base URL and, if used, `VITE_GOOGLE_MAPS_API_KEY`. Vercel's SPA rewrite serves deep links; API requests go directly to Render.
 
 ## Deploy backend to Render
 Use a Render **Web Service** from the same repository with **Root Directory** set to the repository root, **Build Command** `pnpm install --frozen-lockfile && pnpm --filter @swatchnet/shared run typecheck && pnpm --filter @swatchnet/api run build`, and **Start Command** `pnpm --filter @swatchnet/api run start`. Set auto-deploy paths to `apps/api/**`, `packages/shared/**`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, and `render.yaml`. The `render.yaml` Blueprint records these settings. The root install preserves the pnpm lockfile and workspace dependency links; the exact install and API build commands were verified locally. Select a currently available compute plan in Render; the Blueprint intentionally omits a plan value rather than assume account availability.
@@ -37,7 +37,7 @@ Set `NODE_ENV=production`, `DATABASE_URL`, `NEON_AUTH_BASE_URL`, and `CORS_ORIGI
 | Render | `NEON_AUTH_BASE_URL` | Server-side Neon Auth endpoint used to verify JWTs; same URL as Vercel's `VITE_NEON_AUTH_URL` |
 | Render | `CORS_ORIGIN` | Exact allowed frontend origins, comma-separated, no trailing slash (e.g. `https://swatchnet.vercel.app`) |
 | Render | `NODE_ENV` | Set to `production` |
-| Vercel | `VITE_API_BASE_URL` | Render API origin plus `/api`, e.g. `https://swatchnet-api.onrender.com/api` |
+| Vercel | `VITE_API_BASE_URL` | Render API origin plus `/api`: `https://swatchnet.onrender.com/api` |
 | Vercel | `VITE_NEON_AUTH_URL` | Public Neon Auth base URL copied from Neon Console |
 | Vercel | `VITE_GOOGLE_MAPS_API_KEY` | Optional public Maps key; domain-restrict it |
 | Render | `SUPER_ADMIN_BOOTSTRAP_EMAIL` | Optional, one-time: Google account allowed to claim the first Super Admin. Remove after use |

@@ -1,4 +1,5 @@
 {
+  "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter @swatchnet/web run build",
   "outputDirectory": "dist",
