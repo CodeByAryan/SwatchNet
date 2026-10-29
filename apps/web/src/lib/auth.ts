@@ -9,7 +9,9 @@ export const authClient = neonAuthUrl ? createAuthClient(neonAuthUrl) : null;
 export const isAuthConfigured = authClient !== null;
 
 export const AUTH_CALLBACK_PATH = "/auth/callback";
-export const SIGN_IN_CALLBACK_URL = new URL(AUTH_CALLBACK_PATH, window.location.origin).toString();
+export const SIGN_IN_CALLBACK_URL = typeof window !== "undefined"
+  ? new URL(AUTH_CALLBACK_PATH, window.location.origin).toString()
+  : AUTH_CALLBACK_PATH;
 
 export interface AuthSessionUser {
   id: string;
@@ -27,9 +29,12 @@ export async function startGoogleAuth(
     return { ok: false, message: "Neon Auth is not configured. Set VITE_NEON_AUTH_URL." };
   }
   try {
+    const callbackURL = typeof window !== "undefined"
+      ? new URL(AUTH_CALLBACK_PATH, window.location.origin).toString()
+      : SIGN_IN_CALLBACK_URL;
     const result = await authClient.signIn.social({
       provider: "google",
-      callbackURL: SIGN_IN_CALLBACK_URL,
+      callbackURL,
     });
     if (result.error) {
       return { ok: false, message: result.error.message ?? `Google ${mode === "signUp" ? "sign-up" : "sign-in"} failed.` };
