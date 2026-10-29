@@ -51,10 +51,9 @@ export function createApp(): Express {
   app.use(express.json({ limit: "4mb" }));
 
   // Health checks remain public; every other API path requires verified auth.
-  // Public liveness endpoints. Mounted BEFORE the /api gate below: Express runs
-  // matching middleware in registration order, so a global `app.use("/api", â€¦)`
-  // declared first would intercept /api/health and reject the Render health check.
+  // Public liveness & readiness endpoints mounted before the authenticated /api gate.
   app.use("/api/health", healthRouter);
+  app.use("/health", healthRouter);
 
   // Neon Auth SDK JWT is verified on every request; roles are resolved from DB.
   app.use("/api/auth", requireNeonAuth, authRouter);

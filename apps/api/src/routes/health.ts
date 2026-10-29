@@ -27,10 +27,10 @@ export async function checkDatabaseHealth(check: () => Promise<unknown>): Promis
   }
 }
 
-// Mounted at "/api/health" in app.ts, so routes are relative to that mount point.
-// Declaring "/health" here would resolve to /api/health/health and make
-// /api/health fall through to the authenticated /api catch-all (401).
-healthRouter.get("/", (_req: Request, res: Response) => {
+// Mounted at "/api/health" (and "/health") in app.ts.
+// Supporting both "/" and "/health" ensures compatibility whether a client calls
+// /api/health, /api/health/health (earlier mount), or root /health.
+healthRouter.get(["/", "/health"], (_req: Request, res: Response) => {
   const data: HealthCheckResponse = {
     status: "ok",
     timestamp: new Date().toISOString(),
@@ -40,11 +40,12 @@ healthRouter.get("/", (_req: Request, res: Response) => {
 
   res.json({
     success: true,
+    status: "ok",
     data,
   });
 });
 
-healthRouter.get("/db", asyncHandler(async (_req: Request, res: Response) => {
+healthRouter.get(["/db", "/health/db"], asyncHandler(async (_req: Request, res: Response) => {
   if (!isDbConfigured()) {
     res.status(503).json({
       success: false,

@@ -45,12 +45,30 @@ describe("Express authentication boundary", () => {
     });
   });
 
-  it("keeps the liveness health endpoint public", async () => {
-    const response = await fetch(`${baseUrl}/api/health`, { headers: { Connection: "close" } });
-    assert.equal(response.status, 200);
-    const payload = await response.json() as HealthResponse;
-    assert.equal(payload.success, true);
-    assert.equal(payload.data?.status, "ok");
+  it("keeps the liveness health endpoint public and accessible via /api/health, /api/health/health, and /health", async () => {
+    for (const path of ["/api/health", "/api/health/health", "/health"]) {
+      const response = await fetch(`${baseUrl}${path}`, { headers: { Connection: "close" } });
+      assert.equal(response.status, 200, `${path} should return 200`);
+      const payload = await response.json() as HealthResponse & { status?: string };
+      assert.equal(payload.success, true);
+      assert.equal(payload.status, "ok", `${path} should expose top-level status ok`);
+      assert.equal(payload.data?.status, "ok", `${path} should expose data.status ok`);
+    }
+  });
+
+  it("keeps the database health check public (never requires authentication)", async () => {
+    for (const path of ["/api/health/db", "/api/health/health/db", "/health/db"]) {
+      const response = await fetch(`${baseUrl}${path}`, { headers: { Connection: "close" } });
+      // Depending on whether DATABASE_URL is configured/reachable in this test environment,
+      // the status must be either 200 (connected) or 503 (connection failed) — NEVER 401 Unauthorized.
+      assert.ok(
+        response.status === 200 || response.status === 503,
+        `${path} should return 200 or 503, got ${response.status}`,
+      );
+      assert.notEqual(response.status, 401, `${path} must never require authentication`);
+      const payload = await response.json() as Record<string, unknown>;
+      assert.ok(typeof payload.success === "boolean");
+    }
   });
 
   it("rejects an unauthenticated protected API request", async () => {

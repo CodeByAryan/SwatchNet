@@ -597,8 +597,9 @@ function SettingsSection(): React.JSX.Element {
 
   useEffect(() => {
     void (async () => {
-      const outcome = await safeApiCall<{ status: string }>(`${"/api/health"}`);
-      setHealth({ loading: false, error: outcome.ok ? null : outcome.error.message, ok: outcome.ok });
+      const outcome = await safeApiCall<{ status?: string; data?: { status: string } }>("health");
+      const isReachable = outcome.ok && (outcome.data?.status === "ok" || outcome.data?.data?.status === "ok");
+      setHealth({ loading: false, error: outcome.ok ? null : outcome.error.message, ok: isReachable });
     })();
   }, []);
 

@@ -90,9 +90,11 @@ export default function App(): React.JSX.Element {
   // Verify backend health on initial load (falls back cleanly if offline).
   React.useEffect(() => {
     let mounted = true;
-    apiRequest<{ status: string }>("health")
+    apiRequest<{ status?: string; data?: { status: string } }>("health")
       .then((res) => {
-        if (mounted && res?.status === "ok") setApiStatus("connected");
+        if (mounted && (res?.status === "ok" || res?.data?.status === "ok")) {
+          setApiStatus("connected");
+        }
       })
       .catch(() => {
         if (mounted) setApiStatus("offline");
