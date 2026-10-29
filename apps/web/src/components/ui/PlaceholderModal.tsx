@@ -10,6 +10,8 @@ export interface PlaceholderModalProps {
   title?: string;
   description?: string;
   onClose: () => void;
+  onNavigateToReport?: () => void;
+  onNavigateToAuth?: () => void;
 }
 
 export function PlaceholderModal({
@@ -18,6 +20,8 @@ export function PlaceholderModal({
   title,
   description,
   onClose,
+  onNavigateToReport,
+  onNavigateToAuth,
 }: PlaceholderModalProps): React.JSX.Element | null {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,23 +43,27 @@ export function PlaceholderModal({
 
   const contentMap = {
     report: {
-      badge: "Feature in active development",
-      icon: <Camera className="h-5 w-5 text-[#245037]" />,
-      defaultTitle: "Garbage Reporting Workflow",
+      badge: "Intake Workflow",
+      icon: <Camera className="h-5 w-5 text-[#248a61]" />,
+      defaultTitle: "Civic Waste Reporting",
       defaultDesc:
-        "The photo capture, automatic GPS geotagging, and debris categorization pipeline will be connected in the upcoming release. Monorepo architecture and design systems are established.",
+        "Submit photographic proof and exact GPS coordinates to dispatch verified volunteer squads and municipal crews.",
+      actionLabel: "Open Report Form",
+      actionHandler: onNavigateToReport,
       checklist: [
-        "Geotagged image upload with coordinate capture",
-        "Categorization of debris volume and hazard level",
+        "Geotagged image evidence upload",
+        "Categorization of debris volume and hazard priority",
         "Direct dispatching to nearby cleaner circles & municipal crews",
       ],
     },
     signin: {
       badge: "Civic Portal Access",
-      icon: <LogIn className="h-5 w-5 text-[#245037]" />,
+      icon: <LogIn className="h-5 w-5 text-[#248a61]" />,
       defaultTitle: "Authentication & Volunteer Portal",
       defaultDesc:
-        "Resident submissions, cleaner task boards, and administrator review with Neon Auth are being integrated.",
+        "Resident submissions, cleaner task boards, and administrator review with Neon Auth are available in the workspace.",
+      actionLabel: "Go to Sign In",
+      actionHandler: onNavigateToAuth,
       checklist: [
         "Resident profile with tracked reports and status alerts",
         "Cleaner squad dashboard with assigned cleanup routes",
@@ -63,11 +71,13 @@ export function PlaceholderModal({
       ],
     },
     info: {
-      badge: "Platform Roadmap",
-      icon: <Info className="h-5 w-5 text-[#245037]" />,
+      badge: "Standards & Verification",
+      icon: <Info className="h-5 w-5 text-[#248a61]" />,
       defaultTitle: "SwatchNet Transparency & Guidelines",
       defaultDesc:
         "SwatchNet adheres to open civic principles and photographic verification for every resolved report across participating districts.",
+      actionLabel: "Close",
+      actionHandler: onClose,
       checklist: [
         "Open-source community reporting protocols",
         "Double-photo verification benchmark (before & after)",
@@ -80,52 +90,52 @@ export function PlaceholderModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#122118]/70 backdrop-blur-xs transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#163d32]/60 backdrop-blur-xs transition-opacity"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-2xl border border-[#d9e2d6] bg-white p-6 sm:p-8 text-left shadow-[0_20px_50px_rgba(10,25,18,0.25)]"
+        className="relative w-full max-w-lg rounded-2xl border border-[#e1e7e0] bg-white p-6 sm:p-8 text-left shadow-[0_20px_50px_rgba(22,61,50,0.18)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
           aria-label="Close dialog"
-          className="absolute top-4 right-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-[#657769] transition-colors hover:bg-[#eef2ea] hover:text-[#173d2d]"
+          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-[#68756d] transition-colors hover:bg-[#f7f8f4] hover:text-[#202923]"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
 
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#d8e3d3] bg-[#f2f7ef]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#e1e7e0] bg-[#e6f3eb]">
             {activeContent.icon}
           </div>
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#d2dfcd] bg-[#eef4ea] px-3 py-1 text-xs font-semibold text-[#1c3826]">
-              <Sparkles className="h-3 w-3 text-[#527e46]" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#bde3cf] bg-[#e6f3eb] px-2.5 py-0.5 text-xs font-semibold text-[#163d32]">
+              <Sparkles className="h-3 w-3 text-[#248a61]" />
               {activeContent.badge}
             </span>
           </div>
         </div>
 
-        <h3 id="modal-title" className="font-display text-xl font-bold tracking-tight text-[#16241a] sm:text-2xl">
+        <h3 id="modal-title" className="font-display text-xl font-bold tracking-tight text-[#202923] sm:text-2xl">
           {title || activeContent.defaultTitle}
         </h3>
 
-        <p className="mt-2 text-sm leading-relaxed text-[#56685b]">
+        <p className="mt-2 text-xs leading-relaxed text-[#68756d] sm:text-sm">
           {description || activeContent.defaultDesc}
         </p>
 
-        <div className="mt-5 mb-6 rounded-xl border border-[#e2e8df] bg-[#fbfcf9] p-4">
-          <p className="mb-2.5 text-[11px] font-bold tracking-wider text-[#738276] uppercase">
-            Planned Technical Steps
+        <div className="mt-5 mb-6 rounded-xl border border-[#e1e7e0] bg-[#f7f8f4] p-4">
+          <p className="mb-2 text-[10px] font-bold tracking-wider text-[#68756d] uppercase">
+            Standards & Specifications
           </p>
-          <ul className="space-y-2 text-xs text-[#3b4c40]">
+          <ul className="space-y-2 text-xs text-[#202923]">
             {activeContent.checklist.map((item, idx) => (
               <li key={idx} className="flex items-start gap-2.5">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3b6644]" />
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#248a61]" />
                 <span className="leading-normal">{item}</span>
               </li>
             ))}
@@ -133,17 +143,22 @@ export function PlaceholderModal({
         </div>
 
         <div className="flex flex-col items-center justify-end gap-2.5 sm:flex-row">
-          <Button variant="outline" size="md" onClick={onClose} className="w-full sm:w-auto">
-            Close
+          <Button variant="outline" size="sm" onClick={onClose} className="w-full sm:w-auto">
+            Dismiss
           </Button>
-          <Button
-            variant="primary"
-            size="md"
-            onClick={onClose}
-            className="w-full sm:w-auto"
-          >
-            Understood
-          </Button>
+          {activeContent.actionHandler && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                onClose();
+                activeContent.actionHandler?.();
+              }}
+              className="w-full sm:w-auto"
+            >
+              {activeContent.actionLabel}
+            </Button>
+          )}
         </div>
       </div>
     </div>

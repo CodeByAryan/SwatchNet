@@ -21,12 +21,12 @@ export function SafeImage({
       <div
         role="img"
         aria-label={alt || fallbackText}
-        className={`flex flex-col items-center justify-center border border-[#d8e0d4] bg-[#eef3ea] p-6 text-center select-none text-[#5c6e60] ${className}`}
+        className={`flex flex-col items-center justify-center border border-[#e1e7e0] bg-[#f7f8f4] p-6 text-center select-none text-[#68756d] ${className}`}
       >
-        {fallbackIcon || <ImageOff className="mb-2 h-7 w-7 text-[#7a8c7f]" />}
-        <span className="text-xs font-semibold text-[#3a4c3e]">{fallbackText}</span>
+        {fallbackIcon || <ImageOff className="mb-2 h-6 w-6 text-[#94a199]" />}
+        <span className="text-xs font-semibold text-[#202923]">{fallbackText}</span>
         {alt && alt !== fallbackText && (
-          <span className="mt-1 line-clamp-1 max-w-[220px] text-[11px] text-[#718275]">
+          <span className="mt-1 line-clamp-1 max-w-[220px] text-[11px] text-[#94a199]">
             {alt}
           </span>
         )}

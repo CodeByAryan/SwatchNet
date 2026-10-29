@@ -18,7 +18,15 @@ services:
         value: production
       - key: DATABASE_URL
         sync: false
+
       - key: NEON_AUTH_BASE_URL
         sync: false
+
       - key: CORS_ORIGIN
         sync: false
+      # Optional one-time bootstrap: the Google account allowed to claim the
+      # first Super Admin. Blank = disabled. Remove after bootstrapping.
+      - key: SUPER_ADMIN_BOOTSTRAP_EMAIL
+        sync: false
+      - key: CLEANUP_POINTS
+        value: 10

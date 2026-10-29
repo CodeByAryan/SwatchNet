@@ -1,87 +1,114 @@
 import React, { useState } from "react";
-import { Trees, Menu, X, ArrowRight } from "lucide-react";
+import { Trees, Menu, X, ArrowRight, LogOut } from "lucide-react";
 import { Button } from "../ui/Button";
+import type { SessionUser } from "../../session/SessionProvider";
 
 export interface NavbarProps {
-  onReportClick: () => void;
+  currentTab: "home" | "feed" | "report" | "cleaner";
+  onTabChange: (tab: "home" | "feed" | "report" | "cleaner") => void;
+  apiStatus?: "connected" | "connecting" | "offline";
   onSignInClick: () => void;
+  onSignUpClick: () => void;
+  user?: SessionUser;
+  /** Clears the Neon Auth session; the navbar only renders sign-out when signed in. */
+  onSignOut?: () => Promise<void>;
 }
 
-export function Navbar({ onReportClick, onSignInClick }: NavbarProps): React.JSX.Element {
+export function Navbar({
+  currentTab,
+  onTabChange,
+  apiStatus = "connected",
+  onSignInClick,
+  onSignUpClick,
+  user,
+  onSignOut,
+}: NavbarProps): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const signOut = onSignOut ?? (async () => undefined);
 
   const navLinks = [
-    { label: "Home", href: "#hero" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Our Impact", href: "#our-impact" },
-    { label: "About", href: "#about" },
+    { label: "Overview", tab: "home" as const },
+    { label: "Public Feed", tab: "feed" as const },
+    { label: "Cleaner Squad", tab: "cleaner" as const },
   ];
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
-    <header className="sticky top-0 z-40 border-b border-[#e5e9e2] bg-[#fbfcf9]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-[#e1e7e0] bg-[#ffffff]/95 backdrop-blur-md">
       <div className="section-wrap">
-        <div className="flex h-[4.5rem] items-center justify-between sm:h-[5rem]">
+        <div className="flex h-16 items-center justify-between sm:h-[4.5rem]">
           {/* Logo / Wordmark */}
-          <a
-            href="#hero"
-            onClick={(e) => handleLinkClick(e, "#hero")}
-            className="group flex min-h-11 items-center gap-3 rounded-lg focus:outline-none"
+          <button
+            type="button"
+            onClick={() => {
+              onTabChange("home");
+              setMobileMenuOpen(false);
+            }}
+            className="group flex min-h-11 items-center gap-3 rounded-lg text-left focus:outline-none"
             aria-label="SwatchNet Home"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#173d2d] text-white transition-colors group-hover:bg-[#244d39]">
-              <Trees className="h-5 w-5 text-[#c8ddb5]" strokeWidth={1.8} />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#163d32] text-white shadow-2xs transition-colors group-hover:bg-[#1f4f41]">
+              <Trees className="h-4 w-4 text-[#e6f3eb]" strokeWidth={2} />
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-[1.2rem] font-bold leading-none tracking-[-0.045em] text-[#1d2922]">
-                Swatch<span className="text-[#54774b]">Net</span>
+              <span className="font-display text-lg font-bold leading-none tracking-[-0.03em] text-[#202923]">
+                Swatch<span className="text-[#248a61]">Net</span>
               </span>
-              <span className="mt-1 text-[9px] font-semibold uppercase leading-none tracking-[0.15em] text-[#718075]">
-                Civic cleanliness
+              <span className="mt-1 text-[9px] font-semibold uppercase leading-none tracking-[0.14em] text-[#68756d]">
+                Civic Accountability
               </span>
             </div>
-          </a>
+          </button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
+          {/* Desktop Navigation Tabs */}
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.label}
-                href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
-                className="rounded-md py-2 text-[13px] font-medium text-[#59675d] transition-colors hover:text-[#173d2d]"
+                onClick={() => onTabChange(link.tab)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${currentTab === link.tab
+                    ? "bg-[#e6f3eb] text-[#163d32]"
+                    : "text-[#68756d] hover:bg-[#f7f8f4] hover:text-[#202923]"
+                  }`}
               >
                 {link.label}
-              </a>
+              </button>
             ))}
           </nav>
 
           {/* Action CTAs (Desktop) */}
-          <div className="hidden items-center gap-2.5 md:flex">
+          <div className="hidden items-center gap-3 md:flex">
+            {/* Live Backend Connection indicator */}
+            <div
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#e1e7e0] bg-[#f7f8f4] px-2.5 py-1 text-[11px] font-medium text-[#68756d]"
+              title="API Service Health"
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${apiStatus === "connected"
+                    ? "bg-[#248a61]"
+                    : apiStatus === "connecting"
+                      ? "bg-[#d99a35] animate-pulse"
+                      : "bg-[#c94c4c]"
+                  }`}
+              />
+              <span className="capitalize">{apiStatus === "connected" ? "Live" : apiStatus}</span>
+            </div>
+
             <Button
               variant="ghost"
               size="sm"
               onClick={onSignInClick}
-              className="text-[#34463a] hover:bg-[#eef2ea] hover:text-[#173d2d]"
             >
-              Sign In
+              Sign in
             </Button>
+
             <Button
               variant="primary"
               size="sm"
-              onClick={onReportClick}
-              className="group rounded-lg px-4"
+              onClick={onSignUpClick}
+              className="group"
             >
-              <span>Report Garbage</span>
-              <ArrowRight className="h-4 w-4 text-[#cde2bf] transition-transform group-hover:translate-x-0.5" />
+              <span>Get started</span>
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
             </Button>
           </div>
 
@@ -90,11 +117,11 @@ export function Navbar({ onReportClick, onSignInClick }: NavbarProps): React.JSX
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-11 w-11 items-center justify-center rounded-lg text-[#34463a] transition-colors hover:bg-[#eef2ea] hover:text-[#173d2d]"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-[#202923] hover:bg-[#f7f8f4]"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
@@ -102,40 +129,92 @@ export function Navbar({ onReportClick, onSignInClick }: NavbarProps): React.JSX
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="border-b border-[#e5e9e2] bg-[#fbfcf9] px-4 pb-5 pt-2 shadow-md md:hidden">
+        <div className="border-b border-[#e1e7e0] bg-white px-4 pb-5 pt-3 shadow-md md:hidden">
           <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.label}
-                href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
-                className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-[#46544a] transition-colors hover:bg-[#eef2ea] hover:text-[#173d2d]"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onTabChange(link.tab);
+                }}
+                className={`flex min-h-11 items-center rounded-lg px-3 text-left text-sm font-semibold transition-colors ${currentTab === link.tab
+                    ? "bg-[#e6f3eb] text-[#163d32]"
+                    : "text-[#68756d] hover:bg-[#f7f8f4] hover:text-[#202923]"
+                  }`}
               >
                 {link.label}
-              </a>
+              </button>
             ))}
-            <div className="mt-3 flex flex-col gap-2 border-t border-[#e5e9e2] pt-4">
+
+            <div className="mt-3 flex flex-col gap-2 border-t border-[#e1e7e0] pt-4">
+              {user ? (
+                <>
+                  <span className="px-1 text-xs text-[#68756d]">
+                    Signed in as <strong className="text-[#202923]">{user.name}</strong>
+                  </span>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      window.location.assign(
+                        user.role === "super_admin" ? "/admin/super" : user.role === "admin" ? "/admin" : user.role === "volunteer" ? "/volunteer" : "/dashboard",
+                      );
+                    }}
+                    className="w-full justify-center"
+                  >
+                    Open my dashboard
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    onClick={async () => {
+                      setMobileMenuOpen(false);
+                      await signOut();
+                      window.location.assign("/");
+                    }}
+                    className="w-full justify-center"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onSignInClick();
+                    }}
+                    className="w-full justify-center"
+                  >
+                    Sign in
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onSignUpClick();
+                    }}
+                    className="w-full justify-center"
+                  >
+                    Get started
+                  </Button>
+                </>
+              )}
               <Button
                 variant="outline"
                 size="md"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  onSignInClick();
+                  onSignUpClick();
                 }}
                 className="w-full justify-center"
               >
-                Sign In
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onReportClick();
-                }}
-                className="w-full justify-center"
-              >
-                Report Garbage
+                Report Waste Now
               </Button>
             </div>
           </nav>

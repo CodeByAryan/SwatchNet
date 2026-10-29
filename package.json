@@ -10,7 +10,7 @@
     "build": "pnpm --recursive run build",
     "build:web": "pnpm --filter @swatchnet/web run build",
     "typecheck": "pnpm --recursive run typecheck",
-    "test": "pnpm --recursive run test",
+    "test": "pnpm --filter @swatchnet/api exec node --import tsx --test tests/*.test.ts",
     "db:generate": "pnpm --filter @swatchnet/api run db:generate",
     "db:migrate": "pnpm --filter @swatchnet/api run db:migrate",
     "db:push": "pnpm --filter @swatchnet/api run db:push",

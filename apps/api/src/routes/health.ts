@@ -2,10 +2,14 @@ import { Router, Request, Response } from "express";
 import { sql } from "drizzle-orm";
 import { APP_NAME, HealthCheckResponse } from "@swatchnet/shared";
 import { getDb, isDbConfigured } from "../db/index.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
 
 export const healthRouter = Router();
 
-healthRouter.get("/health", (_req: Request, res: Response) => {
+// Mounted at "/api/health" in app.ts, so routes are relative to that mount point.
+// Declaring "/health" here would resolve to /api/health/health and make
+// /api/health fall through to the authenticated /api catch-all (401).
+healthRouter.get("/", (_req: Request, res: Response) => {
   const data: HealthCheckResponse = {
     status: "ok",
     timestamp: new Date().toISOString(),
@@ -19,7 +23,7 @@ healthRouter.get("/health", (_req: Request, res: Response) => {
   });
 });
 
-healthRouter.get("/health/db", async (_req: Request, res: Response) => {
+healthRouter.get("/db", asyncHandler(async (_req: Request, res: Response) => {
   const timestamp = new Date().toISOString();
 
   if (!isDbConfigured()) {
@@ -68,4 +72,4 @@ healthRouter.get("/health/db", async (_req: Request, res: Response) => {
       },
     });
   }
-});
+}));
