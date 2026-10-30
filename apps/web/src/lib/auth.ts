@@ -66,16 +66,47 @@ export async function getCurrentSessionUser(): Promise<AuthSessionUser | null> {
   }
 }
 
-/** Fetches a fresh JWT using Neon Auth's supported token endpoint. */
-export async function getNeonAuthToken(): Promise<string | null> {
-  if (!authClient) return null;
+/**
+ * How long to wait for the SDK session before treating the caller as signed out.
+ * Neon Auth's /get-session endpoint can take a while to answer (and the SDK
+ * itself polls it), so a hard timeout must never run while a valid session is
+ * still on its way — that would report "signed out" for a signed-in user.
+ */
+export const SESSION_TIMEOUT_MS = 30_000;
+
+/**
+ * Fetches a fresh JWT using Neon Auth's supported token endpoint.
+ * Distinguishable failures let callers report the real problem instead of a
+ * blanket "please sign in" for what may be a network/configuration fault.
+ */
+export type NeonAuthTokenResult =
+  | { status: "ok"; token: string }
+  | { status: "unconfigured" | "no_session" | "unreachable" };
+
+export async function getNeonAuthTokenResult(): Promise<NeonAuthTokenResult> {
+  if (!authClient) return { status: "unconfigured" };
+  // A missing/expired session makes the SDK throw AuthApiError (status 401), so
+  // the rejection itself has to be classified — not just `result.error`.
+  const classify = (error: { status?: number } | null | undefined): NeonAuthTokenResult => {
+    // Only 5xx / network failures are "unreachable"; anything else the auth
+    // service rejects is a session problem the user must resolve by signing in.
+    const unreachable = typeof error?.status !== "number" || error.status >= 500;
+    return { status: unreachable ? "unreachable" : "no_session" };
+  };
   try {
     const result = await authClient.token();
-    if (result.error || !result.data?.token) return null;
-    return result.data.token;
-  } catch {
-    return null;
+    if (result.error) return classify(result.error);
+    if (!result.data?.token) return { status: "no_session" };
+    return { status: "ok", token: result.data.token };
+  } catch (error) {
+    return classify(error as { status?: number });
   }
+}
+
+/** Convenience wrapper kept for callers that only need the token or null. */
+export async function getNeonAuthToken(): Promise<string | null> {
+  const result = await getNeonAuthTokenResult();
+  return result.status === "ok" ? result.token : null;
 }
 
 export async function signOutOfNeonAuth(clearLocalSession: () => void = () => undefined): Promise<void> {

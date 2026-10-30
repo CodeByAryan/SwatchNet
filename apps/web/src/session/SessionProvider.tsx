@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { authenticatedApiRequest } from "../lib/authenticatedApi";
-import { getCurrentSessionUser, signOutOfNeonAuth, isAuthConfigured } from "../lib/auth";
+import { getCurrentSessionUser, signOutOfNeonAuth, isAuthConfigured, SESSION_TIMEOUT_MS } from "../lib/auth";
 import type { UserRole } from "./roles";
 
 export interface SessionUser {
@@ -80,13 +80,26 @@ export function SessionProvider({ children }: { children: React.ReactNode }): Re
 
   // Resolve the session once on mount. A 401 (no/expired token) simply means
   // signed out; anything else is surfaced as an error banner.
+  //
+  // The wait is bounded, but generously: Neon Auth's session lookup is a network
+  // round-trip that the SDK itself polls, and cutting it short used to mark a
+  // still-valid session as signed out (a premature redirect to /auth/signin).
   useEffect(() => {
     let active = true;
+    const timeout = new Promise<"timeout">((resolve) => {
+      window.setTimeout(() => resolve("timeout"), SESSION_TIMEOUT_MS);
+    });
     (async () => {
       try {
-        const profile = await fetchProfile();
+        const settled = await Promise.race([fetchProfile(), timeout]);
         if (!active) return;
-        setUser(profile);
+        if (settled === "timeout") {
+          // Neither signed in nor signed out: say so instead of guessing.
+          setUser(null);
+          setError("Neon Auth did not respond in time. Please check your connection and reload.");
+          return;
+        }
+        setUser(settled);
         setError(null);
       } catch (cause) {
         if (!active) return;
